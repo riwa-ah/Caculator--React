@@ -1,42 +1,49 @@
 import './App.css';
 import './styles.css';
 import { useReducer } from 'react';
-import DigitButton from './DigitButton';
-import OperationButton from './OperationButton';
+import Digit_button from './Digit_button';
+import Operation_button from './Operation_button';
 
-export const ACTIONS = {
-  CHOOSE_OPERATION: 'choose-operation',
-  ADD_DIGIT: 'add-digit',
-  CLEAR: 'clear',
-  DELETE_DIGIT: 'delete-digit',
-  EVALUATE: 'evaluate',
+export const Action = {
+  Choose_Op: 'choose-op',
+  Add_digit: 'add-digit',
+  Clear: 'clear',
+  Delete_digit: 'delete-digit',
+  Evaluate: 'evaluate',
 };
 
 function reducer(state, { type, payload }) {
   switch (type) {
-    case ACTIONS.ADD_DIGIT:
+    case Action.Add_digit:
       if (state.overwrite) return { ...state, currOp: payload.digit, overwrite: false };
       if (payload.digit === "0" && state.currOp === "0") return state;
-      if (payload.digit === "." && state.currOp.includes(".")) return state;
+      if (payload.digit === "." && state.currOp?.includes(".")) return state;
       return { ...state, currOp: `${state.currOp || ""}${payload.digit}` };
 
-    case ACTIONS.CLEAR:
+    case Action.Clear:
       return { currOp: null, prevOp: null, operation: null, overwrite: false };
 
-    case ACTIONS.DELETE_DIGIT:
+    case Action.Delete_digit:
       if (state.overwrite) return { ...state, currOp: null, overwrite: false };
       if (!state.currOp) return state;
       if (state.currOp.length === 1) return { ...state, currOp: null };
       return { ...state, currOp: state.currOp.slice(0, -1) };
 
-    case ACTIONS.CHOOSE_OPERATION:
+    case Action.Choose_Op:
       if (!state.currOp && !state.prevOp) return state;
-      if (!state.prevOp) return { ...state, operation: payload.operation, prevOp: state.currOp, currOp: null };
+      if (!state.prevOp)
+        return { ...state, operation: payload.operation, prevOp: state.currOp, currOp: null };
       return { ...state, prevOp: evaluate(state), operation: payload.operation, currOp: null };
 
-    case ACTIONS.EVALUATE:
+    case Action.Evaluate:
       if (!state.currOp || !state.prevOp || !state.operation) return state;
-      return { ...state, currOp: evaluate(state), prevOp: null, operation: null, overwrite: true };
+      return {
+        ...state,
+        currOp: evaluate(state),
+        prevOp: null,
+        operation: null,
+        overwrite: true,
+      };
 
     default:
       return state;
@@ -67,39 +74,34 @@ function App() {
 
   return (
     <div className="calculator">
-      {/* Output display */}
+
       <div className="output">
         <div className="prev-operand">{prevOp} {operation}</div>
         <div className="curr-operand">{currOp}</div>
       </div>
 
-      {/* First row: AC, Del, / */}
-      <button className="span-two" onClick={() => dispatch({ type: ACTIONS.CLEAR })}>AC</button>
-      <button onClick={() => dispatch({ type: ACTIONS.DELETE_DIGIT })}>Del</button>
-      <OperationButton operation="/" dispatch={dispatch} />
+      <button className="span-two" onClick={() => dispatch({ type: Action.Clear })}>AC</button>
+      <button onClick={() => dispatch({ type: Action.Delete_digit })}>Del</button>
+      <Operation_button operation="/" dispatch={dispatch} />
 
-      {/* 7,8,9,* */}
-      <DigitButton digit="7" dispatch={dispatch} />
-      <DigitButton digit="8" dispatch={dispatch} />
-      <DigitButton digit="9" dispatch={dispatch} />
-      <OperationButton operation="*" dispatch={dispatch} />
+      <Digit_button digit="7" dispatch={dispatch} />
+      <Digit_button digit="8" dispatch={dispatch} />
+      <Digit_button digit="9" dispatch={dispatch} />
+      <Operation_button operation="*" dispatch={dispatch} />
 
-      {/* 4,5,6,+ */}
-      <DigitButton digit="4" dispatch={dispatch} />
-      <DigitButton digit="5" dispatch={dispatch} />
-      <DigitButton digit="6" dispatch={dispatch} />
-      <OperationButton operation="+" dispatch={dispatch} />
+      <Digit_button digit="4" dispatch={dispatch} />
+      <Digit_button digit="5" dispatch={dispatch} />
+      <Digit_button digit="6" dispatch={dispatch} />
+      <Operation_button operation="+" dispatch={dispatch} />
 
-      {/* 1,2,3,- */}
-      <DigitButton digit="1" dispatch={dispatch} />
-      <DigitButton digit="2" dispatch={dispatch} />
-      <DigitButton digit="3" dispatch={dispatch} />
-      <OperationButton operation="-" dispatch={dispatch} />
+      <Digit_button digit="1" dispatch={dispatch} />
+      <Digit_button digit="2" dispatch={dispatch} />
+      <Digit_button digit="3" dispatch={dispatch} />
+      <Operation_button operation="-" dispatch={dispatch} />
 
-      {/* .,0,= */}
-      <DigitButton digit="." dispatch={dispatch} />
-      <DigitButton digit="0" dispatch={dispatch} />
-      <button className="span-two" onClick={() => dispatch({ type: ACTIONS.EVALUATE })}>=</button>
+      <Digit_button digit="." dispatch={dispatch} />
+      <Digit_button digit="0" dispatch={dispatch} />
+      <button className="span-two" onClick={() => dispatch({ type: Action.Evaluate })}>=</button>
     </div>
   );
 }
