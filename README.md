@@ -10,5 +10,5 @@ Folder Structure
 /src
  ├── App.js
  ├── styles.css
- ├── DigitButton.js
- └── OperationButton.js
+ ├── Digit_button.js
+ └── Operation_button.js
